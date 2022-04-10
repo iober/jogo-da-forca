@@ -1,0 +1,32 @@
+{
+    "itens": [
+      {
+        "resposta": "banana",
+        "dica": "Macaco"
+      },
+      {
+        "resposta": "lobisomem",
+        "dica": "Lua Cheia"
+      },
+      {
+        "resposta": "americano",
+        "dica": "América do Norte"
+      },
+      {
+        "resposta": "samba",
+        "dica": "Rio de Janeiro"
+      },
+      {
+        "resposta": "limite",
+        "dica": "Fronteira"
+      },
+      {
+        "resposta": "rodeio",
+        "dica": "locutor"
+      },
+      {
+        "resposta": "pinguim",
+        "dica": "É ave mas não voa"
+      }
+    ]
+}

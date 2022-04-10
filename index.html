@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <title>Ler JSON via Javascript!</title>
+    <style>
+        td {
+            width: 30px;
+        }
+        table {
+            border-collapse: collapse;
+        }
+        #idtable {
+            width: 300px;
+        }
+    </style>
+</head>
+<body onload="carregaArquivo()" class="bg-dark text-light">
+    <div class="container-fluid p-5 d-flex justify-content-center">
+        <div class="row align-items-center">
+            <div class="col">
+                <input type="file" accept="application/JSON" name="arq" id="idarquivo" onchange="lerArquivo(this.files[0])"/>
+                <button onclick="location.reload()" id="btnTrocar" style="visibility: hidden;" class="btn btn-primary">Próxima palavra</button>
+                <br><br>
+                <table id="idtable" style="visibility: hidden;font-weight: bold">
+                    <thead>
+                        <td>DICA:</td>
+                    </thead>
+                </table>
+                <br>
+                <br>
+                <div class="row">
+                    <div class="col-7">
+                        <input type="text" class="form-control" placeholder="Digite uma letra" id="inputResposta" style="visibility: hidden;"  maxlength="1" onkeyup="this.value = this.value.toUpperCase()"/>                        
+                    </div>
+                    <div class="col">
+                        <button onclick="verificaResposta()" icon="check" id="btnOk" style="visibility: hidden;" class="btn btn-success">OK</button>
+                    </div>
+                  </div>
+                <br><br>
+                <div align="center" style="font-size: 30px">
+                    <table id="resposta" style="visibility: hidden; text-align: center;">
+                        <span>Resposta:</span>
+                    </table>
+                    <div id="resFinal"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        let resposta = ''
+        let tamanho = 0
+        // LIMPA CAMPO RESPOSTA       
+        document.getElementById('inputResposta').value = '' 
+        // NESSA FUNÇÃO ELE CARREGA AS PERGUNTAS PADRÕES QUE ESTÃO NO CÓDIGO
+        async function carregaArquivo () {
+            var x = (obj[0].itens)
+            let num = Math.floor(Math.random() * 6 + 1)
+            var tabela = document.getElementById("idtable")
+            var tabelaResposta = document.getElementById("resposta")
+            // CRIA O ELEMENTO TBODY NA TABELA
+            var tbody  = document.createElement('tbody');
+            // SETA O ID DO ELEMENTO TBODY
+            tbody.setAttribute('id', 'idtbody') 
+            // PERCORE O JSON CONVERTIDO E MOSTRA A TABELA
+            x.forEach((element, index) => {
+                if (index == num) {
+                    var tr = document.createElement("tr")
+                    tr.innerHTML = '<td>' + x[index].dica.toUpperCase() + '</td>'
+                    resposta = x[index].resposta
+                    tbody.appendChild(tr)
+                    tabela.appendChild(tbody)
+                    // PERCORRE O TAMANHO DA PALAVRA ESCOLHIDA PARA CRIAR A TABELA ONDE SERÁ MOSTRADO A RESPOSTA
+                    for(var i = 0; i < resposta.length; i++) {
+                        tamanho = resposta.length
+                        var trResposta = document.createElement("td")
+                        trResposta.innerHTML = '__'
+                        tabelaResposta.appendChild(trResposta)
+                    }
+                }
+            })
+            // ALTERNA AS VISIBILIDADES DOS BOTÕES E DA TABELA
+            document.getElementById('idarquivo').setAttribute("type", "hidden")
+            document.getElementById('btnTrocar').style.visibility = 'visible'
+            document.getElementById('idtable').style.visibility = 'visible'
+            document.getElementById('inputResposta').style.visibility = 'visible'
+            document.getElementById('btnOk').style.visibility = 'visible'
+            document.getElementById('resposta').style.visibility = 'visible'
+        }
+
+        // NESSA FUNÇÃO SERÁ CRIADO NA TABELA AS TAGS DO TBODY, TR E TD PARA QUE POSSA SER POPULADA A TABELA COM O JSON QUE SERÁ PERCORRIDO
+        // A LEITURA DO ARQUIVO JSON SERÁ FEITO EM UM ARQUIVO COM AS TAGS PRÉ DETERMINADAS EM "RESPOSTA" E "DICA"       
+
+        async function lerArquivo(file) {
+            // ESCOLHE UMA PERGUNTA ALEATÓRIA
+            let num = Math.floor(Math.random() * 6 + 1)
+
+            // EFETUA A LEITURA DO ARQUIVO EM FORMATO TEXTO
+            let text = await file.text();           
+
+            // CONVERTE PARA JSON
+            var x = JSON.parse(text)     
+            var tabela = document.getElementById("idtable")
+            var tabelaResposta = document.getElementById("resposta")
+            // CRIA O ELEMENTO TBODY NA TABELA
+            var tbody  = document.createElement('tbody');
+            // SETA O ID DO ELEMENTO TBODY
+            tbody.setAttribute('id', 'idtbody') 
+            // PERCORE O JSON CONVERTIDO E MOSTRA A TABELA
+            x.itens.forEach((element, index) => {
+                if (index == num) {
+                    var tr = document.createElement("tr")
+                    tr.innerHTML = '<td>' + x.itens[index].dica.toUpperCase() + '</td>'
+                    resposta = x.itens[index].resposta
+                    tamanho = x.itens[index].resposta.length
+                    tbody.appendChild(tr)
+                    tabela.appendChild(tbody)
+                    // PERCORRE O TAMANHO DA PALAVRA ESCOLHIDA PARA CRIAR A TABELA ONDE SERÁ MOSTRADO A RESPOSTA
+                    for(var i = 0; i < resposta.length; i++) {
+                        var trResposta = document.createElement("td")
+                        trResposta.innerHTML = '__'
+                        tabelaResposta.appendChild(trResposta)
+                    }
+                }
+            });
+            // ALTERNA AS VISIBILIDADES DOS BOTÕES E DA TABELA
+            document.getElementById('idarquivo').setAttribute("type", "hidden")
+            document.getElementById('btnTrocar').style.visibility = 'visible'
+            document.getElementById('idtable').style.visibility = 'visible'
+            document.getElementById('inputResposta').style.visibility = 'visible'
+            document.getElementById('btnOk').style.visibility = 'visible'
+            document.getElementById('resposta').style.visibility = 'visible'
+        }
+        // NESSA FUNÇÃO PERMITE CARREGAR UM NOVO ARQUIVO JSON, ONDE VAI MOSTRAR NOVAMENTE O INPUT PARA PROCURAR UM NOVO ARQUIVO
+        async function trocarJson () {
+            // ALTERNA AS VISIBILIDADES DOS BOTÕES E DA TABELA
+            document.getElementById('idarquivo').setAttribute("type", "file")
+            document.getElementById('btnTrocar').style.visibility = 'hidden'
+            document.getElementById('idtable').style.visibility = 'hidden'
+            document.getElementById('inputResposta').style.visibility = 'hidden'
+            document.getElementById('btnOk').style.visibility = 'hidden'
+            document.getElementById('resposta').style.visibility = 'hidden'
+            // REMOVE A TAG TBODY DA TABELA
+            document.getElementById('idtbody').remove()
+        }
+        // VERIFICA SE O NOME DA FRUTA DIGITADA PELO USUÁRIO É IGUAL O SELECIONADO PELO SISTEMA
+        async function verificaResposta () {
+            var resp = document.getElementById('inputResposta').value
+
+            var indices = [];
+            var y = 0
+            // PERCORRE A PALAVRA SELECIONADA E VERIFICA OS INDICES EXISTENTES DA LETRA DIGITADA
+            for(var i = 0; i < resposta.length; i++) {
+                if (resposta[i].toUpperCase() === resp.toUpperCase()) {
+                    console.log(i)
+                    indices.push(i);
+                    y = i + 1
+                    var second = document.querySelector('#resposta td:nth-child(' + y  + ')')
+                    second.innerHTML = resp.toUpperCase()
+                    document.getElementById('inputResposta').value = ''
+                    tamanho = tamanho - 1
+                }
+            }
+            if (tamanho === 0) {
+                    alert("Você ganhou!")
+                    return
+            }
+        }
+
+        var obj = [{
+                "itens": [
+                    {
+                        "resposta": "banana",
+                        "dica": "Macaco"
+                    },
+                    {
+                        "resposta": "lobisomem",
+                        "dica": "Lua Cheia"
+                    },
+                    {
+                        "resposta": "americano",
+                        "dica": "América do Norte"
+                    },
+                    {
+                        "resposta": "samba",
+                        "dica": "Rio de Janeiro"
+                    },
+                    {
+                        "resposta": "limite",
+                        "dica": "Fronteira"
+                    },
+                    {
+                        "resposta": "rodeio",
+                        "dica": "locutor"
+                    },
+                    {
+                        "resposta": "pinguim",
+                        "dica": "É ave mas não voa"
+                    }
+                ]
+            }]  
+    </script>
+</body>
+</html>
