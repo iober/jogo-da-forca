@@ -155,7 +155,7 @@
             var indices = [];
             var y = 0
             // PERCORRE A PALAVRA SELECIONADA E VERIFICA OS INDICES EXISTENTES DA LETRA DIGITADA
-            for(var i = 0; i < resposta.length; i++) {
+            for(var i = 0; i < resposta.length; ++i) {
                 if (resposta[i].toUpperCase() === resp.toUpperCase()) {
                     console.log(i)
                     indices.push(i);
@@ -167,8 +167,10 @@
                 }
             }
             if (tamanho === 0) {
+                setTimeout(() => {
                     alert("Você ganhou!")
                     return
+                }, 1000)
             }
         }
 
